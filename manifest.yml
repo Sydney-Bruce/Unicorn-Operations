@@ -19,7 +19,7 @@
 
     - name: copy index.html
       copy: 
-        src: /home/ansible/app1.html
+        src: templates/index.html
         dest: /var/www/html/index.html
 
     # - name: Install Firewall
