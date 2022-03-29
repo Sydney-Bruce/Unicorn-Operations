@@ -1,30 +1,41 @@
 #!/bin/bash
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
-echo "#~#~#~#~#~#~#~#~#~#~# PINGING SERVER STATUS #~#~#~#~#~#~#~#~#~#~#"
- webservers -m ping
+printf "${PURPLE}#~#~#~#~#~#~#~#~#~#~#~#~# PINGING SERVER STATUS #~#~#~#~#~#~#~#~#~#~#~#~#${NC}\n"
+ansible webservers -m ping
 if [[ $? != 0 ]]; then
-    printf "${RED}#~#~#~#~#~#~#~#~#~#~#${NC}PINGING SERVER STATUS FAILED${RED}#~#~#~#~#~#~#~#~#~#~#\n"
-    exit 2
-fi
-
-echo "#~#~#~#~#~#~#~#~#~#~# CHECKING ANSIBLE SYNTAX #~#~#~#~#~#~#~#~#~#~#"
-sudo ansible-playbook manifest.yml --syntax-check
-if [[ $? != 0 ]]; then
-    echo "#~#~#~#~#~#~#~#~#~#~# CHECKING ANSIBLE SYNTAX FAILED #~#~#~#~#~#~#~#~#~#~#"
+    printf "${RED}#~#~#~#~#~#~#~#~#~# PINGING SERVER STATUS FAILED #~#~#~#~#~#~#~#~#~#${NC}\n"
     exit 2
 else 
-    echo "#~#~#~#~#~#~#~#~#~#~# CHECKING ANSIBLE SYNTAX PASSED #~#~#~#~#~#~#~#~#~#~#"
-fi
-printf '\n%.0s' {1,2}
-echo "#~#~#~#~#~#~#~#~#~#~# DRY RUN #~#~#~#~#~#~#~#~#~#~#"
-sudo ansible-playbook manifest.yml --check
-if [[ $? != 0 ]]; then
-    echo "#~#~#~#~#~#~#~#~#~#~# DRY RUN FAILED #~#~#~#~#~#~#~#~#~#~#"
-    exit 2
+    printf "${GREEN}#~#~#~#~#~#~#~#~#~# PINGING ANSIBLE STATUS PASSED #~#~#~#~#~#~#~#~#~#${NC}\n"
 fi
 
-echo "#~#~#~#~#~#~#~#~#~#~# ANSIBLE RUN #~#~#~#~#~#~#~#~#~#~#"
+printf "${PURPLE}#~#~#~#~#~#~#~#~#~#~#~#~# CHECKING ANSIBLE SYNTAX #~#~#~#~#~#~#~#~#~#~#~#~#${NC}\n"
+ansible-playbook manifest.yml --syntax-check
+if [[ $? != 0 ]]; then
+    printf "${RED}#~#~#~#~#~#~#~#~#~# CHECKING ANSIBLE SYNTAX FAILED #~#~#~#~#~#~#~#~#~#${NC}\n"
+    exit 2
+else 
+    printf "${GREEN}#~#~#~#~#~#~#~#~#~# CHECKING ANSIBLE SYNTAX PASSED #~#~#~#~#~#~#~#~#~#${NC}\n"
+fi
+printf "${PURPLE}#~#~#~#~#~#~#~#~#~#~#~#~# DRY RUN #~#~#~#~#~#~#~#~#~#~#~#~#${NC}\n"
+sudo ansible-playbook manifest.yml --check
+if [[ $? != 0 ]]; then
+    printf "${RED}#~#~#~#~#~#~#~#~#~# DRY RUN FAILED #~#~#~#~#~#~#~#~#~#${NC}\n"
+    exit 2
+else 
+    printf "${GREEN}#~#~#~#~#~#~#~#~#~# DRY RUN PASSED #~#~#~#~#~#~#~#~#~#${NC}\n"
+fi
+
+printf "${PURPLE}#~#~#~#~#~#~#~#~#~#~#~#~# ANSIBLE RUN #~#~#~#~#~#~#~#~#~#~#~#~#${NC}\n"
 sudo ansible-playbook manifest.yml
+if [[ $? != 0 ]]; then
+    printf "${RED}#~#~#~#~#~#~#~#~#~# ANSIBLE RUN FAILED #~#~#~#~#~#~#~#~#~#${NC}\n"
+    exit 2
+else 
+    printf "${GREEN}#~#~#~#~#~#~#~#~#~# ANSIBLE RUN PASSED #~#~#~#~#~#~#~#~#~#${NC}\n"
+fi
+printf '\n%.0s' {1,2}
