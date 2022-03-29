@@ -1,0 +1,48 @@
+---
+- hosts: webservers
+  become: true
+  tasks:
+    - name: Install apache
+      yum:
+        name: httpd
+        state: latest
+
+    - name: start apache
+      systemd: 
+        name: httpd
+        state: started
+
+    # - name: Install Nmap 
+    #   yum:
+    #     name: nmap 
+    #     state: latest
+
+    - name: copy index.html
+      copy: 
+        src: /home/ansible/app1.html
+        dest: /var/www/html/index.html
+
+    # - name: Install Firewall
+    #   yum:
+    #     name: iptables
+    #     state: latest
+    # - name: "Allow port 80/HTTP traffic"
+    #   iptables:
+    #     chain: INPUT
+    #     destination_port: 80
+    #     jump: ACCEPT
+    #     protocol: tcp
+
+  handlers:
+    - name: Restart apache
+      ansible.builtin.service:
+        name: httpd
+        state: restarted
+    # - name: Restart iptables
+    #   ansible.builtin.service:
+    #     name: iptables
+    #     state: restarted
+    # - name: Restart nmap
+    #   ansible.builtin.service:
+    #     name: nmap
+    #     state: restarted
